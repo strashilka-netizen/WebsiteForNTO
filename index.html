@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вывод данных из API</title>
+    <script src="aframe.min.js"></script>
+    <script src="aframe-ar.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      #userInput {
+        position: absolute;
+        top: 0;
+        z-index: 1000;
+      }
+      #sendButton {
+        position: absolute;
+        top: 0;
+        left: 150px;
+        z-index: 1000;
+      }
+      #output {
+        position: absolute;
+        top: 25px;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body style="margin: 0px; overflow: hidden">
+    <!--     <input type="text" id="userName" placeholder="Введите ваше имя" /> -->
+    <input type="text" id="userInput" placeholder="Введите ваш запрос" />
+    <!-- Поле для ввода запроса -->
+    <button id="sendButton">Отправить</button>
+    <!-- Кнопка для отправки запроса -->
+
+    <div id="output"></div>
+    <!-- Элемент для вывода данных -->
+    <style>
+      /* Стили для уменьшения размера поля вывода */
+      #output {
+        width: 300px; /* Ширина поля вывода */
+        height: 200px; /* Высота поля вывода */
+        border: 1px solid #ccc; /* Граница */
+        overflow-y: auto; /* Прокрутка по вертикали */
+        padding: 10px; /* Отступы внутри поля */
+        margin-top: 10px; /* Отступ сверху */
+        background-color: #f9f9f9; /* Цвет фона */
+      }
+    </style>
+    <p id="display">
+      <script>
+        const webhookUrl = "d4573775-7c27-4706-81e9-70ecde24ae69";
+
+        function createUser(webhookurl, name) {
+          return $.ajax({
+            url: `https://chat.botpress.cloud/${webhookurl}/users`,
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "content-type": "application/json",
+            },
+            data: JSON.stringify({ name: name }),
+          }).fail(function (jqXHR, textStatus) {
+            console.log(`Ошибка отправки[${jqXHR}]: ${textStatus}`);
+            return false;
+          });
+        }
+
+        function createConversation(webhookurl, key, userId) {
+          return $.ajax({
+            url: `https://chat.botpress.cloud/${webhookurl}/conversations`,
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "x-user-key": key,
+              "content-type": "application/json",
+            },
+            data: JSON.stringify({ id: userId }),
+          }).fail(function (jqXHR, textStatus) {
+            console.log(`Ошибка отправки[${jqXHR}]: ${textStatus}`);
+            return false;
+          });
+        }
+
+        function createMessage(webhookurl, key, conversationId, text) {
+          return $.ajax({
+            url: `https://chat.botpress.cloud/${webhookurl}/messages`,
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "x-user-key": key,
+              "content-type": "application/json",
+            },
+            data: JSON.stringify({
+              payload: { type: "text", text: `${text}` },
+              conversationId: conversationId,
+            }),
+          }).fail(function (jqXHR, textStatus) {
+            console.log(`Ошибка отправки[${jqXHR}]: ${textStatus}`);
+            return false;
+          });
+        }
+
+        function listMessages(webhookurl, key, conversationId) {
+          return $.ajax({
+            url: `https://chat.botpress.cloud/${webhookurl}/conversations/${conversationId}/messages`,
+            method: "GET",
+            headers: {
+              accept: "application/json",
+              "x-user-key": key,
+            },
+          }).fail(function (jqXHR, textStatus) {
+            console.log(`Ошибка отправки[${jqXHR}]: ${textStatus}`);
+            return false;
+          });
+        }
+
+        function listenConservation(webhookurl, key, conversationId) {
+          return $.ajax({
+            url: `https://chat.botpress.cloud/${webhookurl}/conversations/${conversationId}/messages`,
+            method: "GET",
+            headers: {
+              "Content-Type": "text/event-stream",
+              "x-user-key": key,
+            },
+          }).fail(function (jqXHR, textStatus) {
+            console.log(`Ошибка отправки[${jqXHR}]: ${textStatus}`);
+            return false;
+          });
+        }
+        function getrandomInt(min, max) {
+          return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function ModelChange() {
+          /*const orderAttrNode = document.createAttribute("gltf-model");*/
+          const instant = document.getElementById("currentObj");
+          var input = document
+            .getElementById("userInput")
+            .value.trim()
+            .toLowerCase();
+
+          if (input.includes("сердц")) {
+            /*orderAttrNode.value = "#heart";*/
+            instant.setAttribute("gltf-model", `#heart`);
+            instant.setAttribute("mixin", `heartPos`);
+          }
+          if (input.includes("печен")) {
+            /*orderAttrNode.value = "#liver";*/
+            instant.setAttribute("gltf-model", `#liver`);
+            instant.setAttribute("mixin", `liverPos`);
+          }
+          if (input.includes("кишечн")) {
+            /*orderAttrNode.value = "#kish";*/
+            instant.setAttribute("gltf-model", `#kish`);
+            instant.setAttribute("mixin", `kishPos`);
+          }
+          if (input.includes("желуд")) {
+            /*orderAttrNode.value = "#stomach";*/
+            instant.setAttribute("gltf-model", `#stomach`);
+            instant.setAttribute("mixin", `stomachPos`);
+          }
+          if (input.includes("легк")) {
+            /*orderAttrNode.value = "#lungs";*/
+            instant.setAttribute("gltf-model", `#lungs`);
+            instant.setAttribute("mixin", `lungsPos`);
+          }
+          if (input.includes("мозг")) {
+            /*orderAttrNode.value = "#brain";*/
+            instant.setAttribute("gltf-model", `#brain`);
+            instant.setAttribute("mixin", `brainPos`);
+          }
+
+          /*instant.setAttributeNode(orderAttrNode); */
+          const modelValue = instant.getAttribute("gltf-model");
+          alert(modelValue);
+        }
+
+        $("#sendButton").on("click", function () {
+          var name = Math.floor(Math.random() * (100000 - 1000)) + 1000;
+          var input = $("#userInput").val().trim();
+
+          ModelChange();
+          var intervalId = localStorage.getItem("intervalId");
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+
+          if (!localStorage.getItem("conservationId")) {
+            createUser(webhookUrl, name)
+              .then((userData) => {
+                if (userData) {
+                  return createConversation(
+                    webhookUrl,
+                    userData["key"],
+                    userData["id"]
+                  ).then((conversationId) => {
+                    return { userData, conversationId }; // Return both userData and conversationId
+                  });
+                }
+                throw new Error("Failed to create user.");
+              })
+              .then(({ userData, conversationId }) => {
+                localStorage.setItem(
+                  "conservationId",
+                  conversationId.conversation.id
+                );
+                localStorage.setItem("key", userData["key"]);
+                return createMessage(
+                  webhookUrl,
+                  userData["key"],
+                  conversationId.conversation.id,
+                  input
+                ).then(() => {
+                  return listConservation(
+                    webhookUrl,
+                    userData["key"],
+                    conversationId.conversation.id
+                  );
+                });
+              })
+              .then((answer) => {
+                if (answer.messages[0].payload.text == input) {
+                  const intervalId = setInterval(function () {
+                    //получаем ещё раз listMessages
+                    listConservation(
+                      webhookUrl,
+                      localStorage.getItem("key"),
+                      localStorage.getItem("conservationId")
+                    ).then((data) => {
+                      $("#output").text("");
+                      data.messages.forEach((item) => {
+                        $("#output").append(
+                          item.payload["text"] +
+                            "<br>_____________________________<br>"
+                        );
+                      });
+                    });
+                  }, 1000);
+                  localStorage.setItem("intervalId", intervalId);
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          } else {
+            console.log(localStorage.getItem("key"));
+            createMessage(
+              webhookUrl,
+              localStorage.getItem("key"),
+              localStorage.getItem("conservationId"),
+              input
+            ).then((data) => {
+              console.log("отправили");
+              listMessages(
+                webhookUrl,
+                localStorage.getItem("key"),
+                localStorage.getItem("conservationId")
+              ).then((data) => {
+                if (data.messages[0].payload.text == input) {
+                  const intervalId = setInterval(function () {
+                    //получаем ещё раз listMessages
+                    listMessages(
+                      webhookUrl,
+                      localStorage.getItem("key"),
+                      localStorage.getItem("conservationId")
+                    ).then((data) => {
+                      $("#output").text("");
+                      data.messages.forEach((item) => {
+                        $("#output").append(
+                          item.payload["text"] +
+                            "<br>_____________________________<br>"
+                        );
+                      });
+                    });
+                  }, 1000);
+                  localStorage.setItem("intervalId", intervalId);
+                }
+              });
+            });
+          }
+        });
+      </script>
+    </p>
+    <a-scene
+      embedded
+      vr-mode-ui="enabled: false;"
+      arjs="debugUIEnabled: false;"
+    >
+      <a-assets>
+        <!--         Сердце -->
+        <a-asset-item
+          id="heart"
+          src="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/tree.gltf?v=1733999001544"
+        >
+        </a-asset-item>
+        <a-mixin
+          id="heartPos"
+          gltf-model="#heart"
+          position="0 0 0"
+          scale="0.01 0.01 0.01"
+          rotation="0 0 0"
+        >
+        </a-mixin>
+        <!--         Печень -->
+        <a-asset-item
+          id="liver"
+          src="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/liver2.glb?v=1734193912196"
+        >
+        </a-asset-item>
+        <a-mixin
+          id="liverPos"
+          gltf-model="#liver"
+          position="0 0 0"
+          scale="0.1 0.1 0.1"
+          rotation="0 0 0"
+        >
+        </a-mixin>
+        <!--         Кишка -->
+        <a-asset-item
+          id="kish"
+          src="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/kishki.glb?v=1734181965461"
+        >
+        </a-asset-item>
+        <a-mixin
+          id="kishPos"
+          gltf-model="#kish"
+          position="0 0 0"
+          scale="0.1 0.1 0.1"
+          rotation="0 0 0"
+        >
+        </a-mixin>
+        <!--         Желудок -->
+        <a-asset-item
+          id="stomach"
+          src="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/stomach_modelling.glb?v=1734181158018"
+        >
+        </a-asset-item>
+        <a-mixin
+          id="stomachPos"
+          gltf-model="#stomach"
+          position="0 0 0"
+          scale="0.1 0.1 0.1"
+          rotation="0 0 0"
+        >
+        </a-mixin>
+
+        <!--         Лёгкие -->
+        <a-asset-item
+          id="lungs"
+          src="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/Lung.glb?v=1734181567015"
+        >
+        </a-asset-item>
+        <a-mixin
+          id="lungsPos"
+          gltf-model="#lungs"
+          position="0 0 0"
+          scale="0.1 0.1 0.1"
+          rotation="0 0 0"
+        >
+        </a-mixin>
+
+        <!--         Мозг -->
+        <a-asset-item
+          id="brain"
+          src="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/brain2.glb?v=1734194380523"
+        >
+        </a-asset-item>
+        <a-mixin
+          id="brainPos"
+          gltf-model="#brain"
+          position="0 0 0"
+          scale="0.1 0.1 0.1"
+          rotation="0 0 0"
+        >
+        </a-mixin>
+      </a-assets>
+
+      <a-marker
+        preset="custom"
+        type="pattern"
+        url="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/pattern-bone.patt?v=1734194198710"
+      >
+        <a-entity
+          id="currentObj"
+          gltf-model="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/kishki.glb?v=1734181965461"
+          mixin="brainPos"
+        ></a-entity>
+        <a-entity
+          gltf-model="https://cdn.glitch.global/f5582923-7646-4665-8bb0-7f04b9289710/Skeleton.glb?v=1734180763589"
+          position="0 0 -0.5"
+          rotation="-90 0 0"
+          scale="0.5 0.5 0.5"
+          material="color: white; opacity: 0.5; transparent: true"
+        >
+        </a-entity>
+      </a-marker>
+      <a-light
+        type="point"
+        position="2 3 2"
+        intensity="3"
+        color="#FFFFFF"
+      ></a-light>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>
